@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomePlanner - Build Your Dream Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #FBF5F1;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="absolute top-0 w-full px-12 py-4 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+            <img src="/frontend/assets/icons/home-icon.png" alt="Home Icon" class="w-18 h-10">
+            <span class="text-2xl font-bold text-[#2B1B12]"></span>
+        </div>
+        <div class="flex items-center space-x-8">
+            <img src="/frontend/assets/icons/icon2.png" alt="Search Icon" class="w-6 h-6 cursor-pointer hover:opacity-70">
+            <img src="/frontend/assets/icons/icon1.png" alt="User Icon" class="w-7 h-6 cursor-pointer hover:opacity-70">
+            <button class="py-2 px-6 bg-[#2B1B12] text-white rounded-lg hover:bg-opacity-80">
+                Sign up
+            </button>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <div class="flex flex-col items-center space-y-10 mt-28">
+        <h1 class="text-4xl font-bold text-[#2B1B12]">Let's Build your Dream Home</h1>
+
+        <!-- Text Input Section -->
+        <div class="bg-[#DDC7BB] p-2 rounded-lg shadow-md w-[1080px]">
+            <!-- Multi-line input using <textarea> -->
+            <textarea id="input-text" placeholder="Generate a floorplan having 2 bedrooms..."
+                class="w-full p-5 bg-transparent text-[#2B1B12] placeholder-[#2B1B12] text-xl rounded-lg outline-none resize-none h-40"></textarea>
+            <!-- You can change the size here:
+                 - To adjust the width, modify 'w-[650px]' in the parent <div>.
+                 - To adjust the height, modify 'h-40' inside the <textarea>. (e.g., h-32, h-48) -->
+        </div>
+
+        <!-- Button Section -->
+        <button id="generate-btn" class="bg-[#2B1B12] text-white py-4 px-12 rounded-lg hover:bg-opacity-80">
+            Generate
+        </button>
+    </div>
+
+    <script>
+        document.getElementById('generate-btn').addEventListener('click', () => {
+            const inputText = document.getElementById('input-text').value;
+            fetch('http://127.0.0.1:5000/api/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: inputText })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const params = new URLSearchParams({
+                    img1: data.images[0],
+                    img2: data.images[1],
+                    img3: data.images[2]
+                });
+                window.location.href = `/frontend/ground_floor.html?${params}`;
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomePlanner - Summary</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #FBF5F1;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center min-h-screen relative">
+
+    <!-- Navbar -->
+    <nav class="absolute top-0 w-full p-4 flex justify-between items-center">
+        <div class="text-2xl font-bold text-[#2B1B12]">HomePlanner</div>
+        <div class="flex space-x-6">
+            <button class="text-[#2B1B12] hover:text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m0 0h6m0 0H9M9 12H3" />
+                </svg>
+            </button>
+            <button class="text-[#2B1B12] hover:text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m0 0h6m0 0H9M9 12H3" />
+                </svg>
+            </button>
+            <button class="py-2 px-4 bg-[#2B1B12] text-white rounded-lg hover:bg-opacity-80">
+                Sign up
+            </button>
+        </div>
+    </nav>
+
+    <!-- Title -->
+    <h1 class="mt-16 text-4xl font-bold text-[#2B1B12]">Your personalized Home Plan</h1>
+
+    <!-- Summary Section -->
+    <div class="bg-[#DDC7BB] mt-8 p-6 rounded-lg shadow-md w-[750px] flex justify-around">
+        <!-- Ground Floor Plan -->
+        <div>
+            <h2 class="text-xl font-semibold text-[#2B1B12] text-center mb-2">Ground Floor</h2>
+            <div id="groundFloor" class="w-[250px] h-[300px] bg-white rounded-lg shadow-md"></div>
+        </div>
+        
+        <!-- First Floor Plan -->
+        <div>
+            <h2 class="text-xl font-semibold text-[#2B1B12] text-center mb-2">First Floor</h2>
+            <div id="firstFloor" class="w-[250px] h-[300px] bg-white rounded-lg shadow-md"></div>
+        </div>
+    </div>
+
+    <script>
+        // Retrieve selected ground and first floor images from query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const groundFloorImg = urlParams.get('groundFloorImg');
+        const firstFloorImg = urlParams.get('firstFloorImg');
+
+        // Display the images in the respective divs
+        document.getElementById('groundFloor').style.backgroundImage = `url('${groundFloorImg}')`;
+        document.getElementById('firstFloor').style.backgroundImage = `url('${firstFloorImg}')`;
+
+        // Apply background styles to images
+        ['groundFloor', 'firstFloor'].forEach(floor => {
+            document.getElementById(floor).style.backgroundSize = 'cover';
+            document.getElementById(floor).style.backgroundPosition = 'center';
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomePlanner - First Floor Plans</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #FBF5F1;
+        }
+
+        .floorplan-box {
+            border: 2px solid #2B1B12;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .selected {
+            border: 4px solid #FF5722;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center min-h-screen relative">
+
+    <!-- Navbar -->
+    <nav class="absolute top-0 w-full p-4 flex justify-between items-center">
+        <div class="text-2xl font-bold text-[#2B1B12]">HomePlanner</div>
+        <a href="index.html" class="bg-[#2B1B12] text-white py-2 px-4 rounded-lg hover:bg-opacity-80">Home</a>
+    </nav>
+
+    <!-- Title -->
+    <h1 class="mt-24 text-4xl font-bold text-[#2B1B12]">First Floor Plans</h1>
+
+    <!-- Floorplan Options -->
+    <div class="bg-[#DDC7BB] mt-8 p-6 rounded-lg shadow-md w-[1050px] flex justify-around space-x-4">
+        <div id="firstPlan1" class="floorplan-box w-[330px] h-[300px] bg-white shadow-md cursor-pointer"></div>
+        <div id="firstPlan2" class="floorplan-box w-[330px] h-[300px] bg-white shadow-md cursor-pointer"></div>
+        <div id="firstPlan3" class="floorplan-box w-[330px] h-[300px] bg-white shadow-md cursor-pointer"></div>
+    </div>
+
+    <!-- Finalize Button -->
+    <div class="mt-8">
+        <button id="finalize-plan" class="bg-[#2B1B12] text-white py-3 px-6 rounded-lg hover:bg-opacity-80">
+            Finalize Plan
+        </button>
+    </div>
+
+    <script>
+        let selectedFirstPlan = null;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const images = [urlParams.get('firstImg1'), urlParams.get('firstImg2'), urlParams.get('firstImg3')];
+
+        console.log('First floor images:', images);  // Debugging: Ensure image paths are correct
+
+        // Check if images are properly assigned and display them
+        if (images[0] && images[1] && images[2]) {
+            document.getElementById('firstPlan1').style.backgroundImage = `url('${images[0]}')`;
+            document.getElementById('firstPlan2').style.backgroundImage = `url('${images[1]}')`;
+            document.getElementById('firstPlan3').style.backgroundImage = `url('${images[2]}')`;
+        } else {
+            console.error('Missing images for the first floor.');
+        }
+
+        // Highlight selected plan on click
+        document.querySelectorAll('.floorplan-box').forEach((box, index) => {
+            box.addEventListener('click', () => {
+                document.querySelectorAll('.floorplan-box').forEach(box => box.classList.remove('selected'));
+                box.classList.add('selected');
+                selectedFirstPlan = images[index];
+            });
+        });
+
+        // Finalize the selected first-floor plan
+        document.getElementById('finalize-plan').addEventListener('click', () => {
+            if (!selectedFirstPlan) {
+                alert('Please select a first floor plan to finalize.');
+                return;
+            }
+
+            fetch('http://127.0.0.1:5000/api/finalize', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ firstFloor: selectedFirstPlan })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                window.location.href = 'index.html';
+            });
+        });
+    </script>
+
+</body>
+</html>

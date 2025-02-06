@@ -1,0 +1,1 @@
+{"Bedroom_1": {"x": 10, "y": 0, "width": 7, "height": 8, "has_washroom_attached": true}, "Bedroom_2": {"x": 9, "y": 8, "width": 8, "height": 7}, "Washroom_1": {"x": 3, "y": 12, "width": 4, "height": 4}, "Kitchen": {"x": 9, "y": 15, "width": 6, "height": 5}, "Garage": {"x": 0, "y": 2, "width": 9, "height": 8}}

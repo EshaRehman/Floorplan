@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomePlanner - Ground Floor Plans</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #FBF5F1;
+        }
+
+        /* Brown border around floorplan boxes */
+        .floorplan-box {
+            border: 2px solid #2B1B12;
+        }
+
+        .selected {
+            border: 4px solid #FF5722; /* Highlight selected plan */
+        }
+
+        /* Ensuring both buttons have the same width */
+        .equal-button {
+            width: 200px;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center min-h-screen relative">
+
+    <!-- Navbar -->
+    <nav class="absolute top-0 w-full px-12 py-4 flex justify-between items-center">
+        <div class="text-2xl font-bold text-[#2B1B12]">HomePlanner</div>
+    </nav>
+
+    <!-- Title -->
+    <h1 class="mt-24 text-4xl font-bold text-[#2B1B12]">Ground Floor Plans</h1>
+
+    <!-- Floorplan Options -->
+    <div class="bg-[#DDC7BB] mt-8 p-7 rounded-lg shadow-md w-[1150px] flex justify-around space-x-4">
+        <div id="plan1" class="floorplan-box w-[330px] h-[300px] bg-white shadow-md cursor-pointer"></div>
+        <div id="plan2" class="floorplan-box w-[330px] h-[300px] bg-white shadow-md cursor-pointer"></div>
+        <div id="plan3" class="floorplan-box w-[330px] h-[300px] bg-white shadow-md cursor-pointer"></div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="flex space-x-6 mt-8">
+        <button id="generate-first-floor" class="equal-button bg-[#2B1B12] text-white py-3 px-6 rounded-lg hover:bg-opacity-80">
+            Generate 1st Floor
+        </button>
+        <button id="regenerate" class="equal-button bg-[#2B1B12] text-white py-3 px-6 rounded-lg hover:bg-opacity-80">
+            Regenerate
+        </button>
+    </div>
+
+    <script>
+        let selectedPlan = null;
+
+        // Retrieve images passed via query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const images = [urlParams.get('img1'), urlParams.get('img2'), urlParams.get('img3')];
+
+        // Display the images in the respective divs
+        document.getElementById('plan1').style.backgroundImage = `url('${images[0]}')`;
+        document.getElementById('plan2').style.backgroundImage = `url('${images[1]}')`;
+        document.getElementById('plan3').style.backgroundImage = `url('${images[2]}')`;
+
+        // Background styling for the floorplan images
+        ['plan1', 'plan2', 'plan3'].forEach(plan => {
+            document.getElementById(plan).style.backgroundSize = 'cover';
+            document.getElementById(plan).style.backgroundPosition = 'center';
+        });
+
+        // Click handler to highlight the selected floorplan
+        document.querySelectorAll('.floorplan-box').forEach((box, index) => {
+            box.addEventListener('click', () => {
+                // Remove the "selected" class from all
+                document.querySelectorAll('.floorplan-box').forEach(box => box.classList.remove('selected'));
+
+                // Highlight the selected box
+                box.classList.add('selected');
+                selectedPlan = images[index];  // Store the selected image
+            });
+        });
+
+        // Event listener for generating the 1st floor
+        document.getElementById('generate-first-floor').addEventListener('click', () => {
+            if (!selectedPlan) {
+                alert('Please select a floorplan first.');
+                return;
+            }
+
+            fetch('http://127.0.0.1:5000/api/first-floor', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ selectedPlan: selectedPlan })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const params = new URLSearchParams({
+                    firstImg1: data.firstFloorImages[0],
+                    firstImg2: data.firstFloorImages[1],
+                    firstImg3: data.firstFloorImages[2]
+                });
+                window.location.href = `first_floor.html?${params}`;
+            });
+        });
+
+        // Regenerate button to go back to input page and generate new plans
+        document.getElementById('regenerate').addEventListener('click', () => {
+            fetch('http://127.0.0.1:5000/api/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: "Generate a floorplan with 2 bedrooms." })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const params = new URLSearchParams({
+                    img1: data.images[0],
+                    img2: data.images[1],
+                    img3: data.images[2]
+                });
+                window.location.href = `ground_floor.html?${params}`;
+            });
+        });
+    </script>
+
+</body>
+</html>
